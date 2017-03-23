@@ -2,6 +2,8 @@
 package Modulos;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -25,7 +27,7 @@ public class Protocolo implements Serializable {
     private String livro;
     @Column(nullable=false, length= 250)
     private String registro;
-    @Column(nullable=false, length=50)
+    @Column(nullable=true, length=50)
     private String folha;
     @Column(unique=true, nullable=false,columnDefinition="text")
     private String anotacao;
@@ -38,8 +40,33 @@ public class Protocolo implements Serializable {
     @ManyToOne
     private Empresa empresa; 
 
+    public boolean valido(Protocolo p, char tipo){
+        boolean erro = false;
+        
+        
+        
+        if(p.nome_empresa.equals("") && tipo == 'J'){
+            erro = true;
+        }
+        
+        if( p.nome_representante.equals("")  && tipo == 'F'){
+            erro = true;
+        }
+        
+        
+        if(p.livro.equals("") || p.registro.equals("") || p.folha.equals("")){
+            erro = true;
+        }
+        
+        
+        return erro;
+    }
+    
     public long getId() {
         return id;
+    }
+    public String getIdString() {
+        return ""+id;
     }
 
     public void setId(long id) {
@@ -64,6 +91,12 @@ public class Protocolo implements Serializable {
 
     public Date getData() {
         return data;
+    }
+    
+    public String getDataString(){
+        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+        
+        return ""+f.format(data);
     }
 
     public void setData(Date data) {

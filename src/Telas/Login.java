@@ -57,7 +57,7 @@ public class Login extends javax.swing.JFrame {
         jb_entrar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jb_entrar.setForeground(new java.awt.Color(255, 255, 255));
         jb_entrar.setText("Entrar");
-        jb_entrar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jb_entrar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jb_entrar.setContentAreaFilled(false);
         jb_entrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -135,6 +135,7 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null,"Usuario ou senha invalido(s)!");
             }
             s.close();
+            
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {

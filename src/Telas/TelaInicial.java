@@ -5,6 +5,15 @@
  */
 package Telas;
 
+import Hibernate.HibernateUtil;
+import Modulos.Protocolo;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
 /**
  *
  * @author Wesley
@@ -12,15 +21,38 @@ package Telas;
 public class TelaInicial extends javax.swing.JFrame {
 
     Sessao sessao;
+    DefaultTableModel val;
+    EditarProtocolo editar;
     /**
      * Creates new form Listar
      */
     public TelaInicial(Sessao sessao) {
         
+       
         
         this.sessao = sessao;
         initComponents();
+        setTitle("Sistema da empresa - "+sessao.currentEmpresa().getNome());
         
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s2 = sf.openSession();
+        List<Protocolo> protocolos = s2.createQuery("from Protocolo").list();
+         val= (DefaultTableModel) jt_tabela.getModel();
+        for(Protocolo p : protocolos){
+            if(!p.getNome_representante().equals("")){
+            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});
+            }else{
+            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});    
+            }
+        }
+        s2.close();
+        
+        
+    }
+    
+    public void recebendoDadosTabela(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao){
+        DefaultTableModel val = (DefaultTableModel) jt_tabela.getModel();
+        val.addRow(new String[]{ id, nome, cpf_cnpj, data, livro, registro,folha, anotacao});
     }
 
     /**
@@ -33,86 +65,100 @@ public class TelaInicial extends javax.swing.JFrame {
     private void initComponents() {
 
         RadioGroup = new javax.swing.ButtonGroup();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jt_tabela = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        txt_nome = new javax.swing.JTextField();
+        jb_perquisar = new javax.swing.JButton();
+        jb_excluir = new javax.swing.JButton();
+        jb_editar = new javax.swing.JButton();
+        jb_novo = new javax.swing.JButton();
+        jr_fisica = new javax.swing.JRadioButton();
+        jr_juridica = new javax.swing.JRadioButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jt_tabela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "Nº de ordem", "Nome do representante", "CPF", "Data do registro", "Livro", "Registro", "Anotações"
+                "Nº de ordem", "Nome ", "CPF/CNPJ", "Data do registro", "Livro", "Registro", "Folha", "Anotações"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue("Nº de ordem");
-            jTable1.getColumnModel().getColumn(1).setHeaderValue("Nome do representante");
-            jTable1.getColumnModel().getColumn(2).setHeaderValue("CPF");
-            jTable1.getColumnModel().getColumn(3).setHeaderValue("Data do registro");
-            jTable1.getColumnModel().getColumn(4).setHeaderValue("Livro");
-            jTable1.getColumnModel().getColumn(5).setHeaderValue("Registro");
-            jTable1.getColumnModel().getColumn(6).setHeaderValue("Anotações");
-        }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jt_tabela);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Nome");
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        txt_nome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                txt_nomeActionPerformed(evt);
             }
         });
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel9.setText("CPF");
-
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
+        jb_perquisar.setText("Pesquisar");
+        jb_perquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
+                jb_perquisarActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Pesquisar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jb_excluir.setText("Excluir");
+        jb_excluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jb_excluirActionPerformed(evt);
             }
         });
 
-        jMenu1.setText("Protocolo");
-
-        jMenuItem1.setText("Cadastro");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jb_editar.setText("Editar");
+        jb_editar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jb_editarActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
 
-        jMenuItem2.setText("Listar");
-        jMenu1.add(jMenuItem2);
+        jb_novo.setText("Novo");
+        jb_novo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_novoActionPerformed(evt);
+            }
+        });
 
-        jMenuBar1.add(jMenu1);
+        buttonGroup1.add(jr_fisica);
+        jr_fisica.setSelected(true);
+        jr_fisica.setText("Pessoa Física");
+
+        buttonGroup1.add(jr_juridica);
+        jr_juridica.setText("Pessoa Jurídica");
+
+        jMenu4.setText("Usuarios");
+        jMenu4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu4MouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenu4);
 
         jMenu3.setText("Empresa");
+        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu3MouseClicked(evt);
+            }
+        });
         jMenuBar1.add(jMenu3);
-
-        jMenu2.setText("Sobre");
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -123,66 +169,134 @@ public class TelaInicial extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8)
-                                .addGap(165, 165, 165)))
+                                .addGap(18, 18, 18)
+                                .addComponent(jr_fisica)
+                                .addGap(18, 18, 18)
+                                .addComponent(jr_juridica))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jb_perquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jb_novo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(165, 165, 165)))
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 294, Short.MAX_VALUE)))
+                        .addComponent(jb_editar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jb_excluir)
+                        .addGap(18, 18, 18)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(33, 33, 33)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(36, 36, 36)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jb_excluir)
+                            .addComponent(jb_editar)
+                            .addComponent(jb_novo)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(jr_fisica)
+                            .addComponent(jr_juridica))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField7)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jb_perquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void txt_nomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }//GEN-LAST:event_txt_nomeActionPerformed
 
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void jb_perquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_perquisarActionPerformed
         
+        
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s2 = sf.openSession();
+        List<Protocolo> protocolos;
+        if(jr_fisica.isSelected()){
+            protocolos = s2.createQuery("from Protocolo where nome_representante like '%"+txt_nome.getText()+"%'").list();
+        }else{
+            protocolos = s2.createQuery("from Protocolo where nome_empresa like '%"+txt_nome.getText()+"%'").list();
+        }
+        while(val.getRowCount()>0){
+            val.removeRow(0);
+        }
+        for(Protocolo p : protocolos){
+            if(!p.getNome_representante().equals("")){
+            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});
+            }else{
+            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});    
+            }
+        }
+        s2.close();
+        
+        
+    }//GEN-LAST:event_jb_perquisarActionPerformed
+
+    private void jb_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_excluirActionPerformed
+              
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s = sf.openSession();
+        Transaction t = s.beginTransaction();
+        List<Protocolo> p = s.createQuery("from Protocolo where id="+val.getValueAt(jt_tabela.getSelectedRow(), 0).toString()).list();
+        s.delete(p.get(0));
+        t.commit();
+        s.close();   
+        
+        val.removeRow(jt_tabela.getSelectedRow());
+        
+        JOptionPane.showMessageDialog(null,"Excluido com sucesso!");
+    }//GEN-LAST:event_jb_excluirActionPerformed
+
+    private void jb_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_editarActionPerformed
+        if(jt_tabela.getSelectedRow() != -1){
         this.setVisible(false);
-        
+        editar = new EditarProtocolo(sessao);
+        editar.setVisible(true);
+        String id=val.getValueAt(jt_tabela.getSelectedRow(), 0).toString();
+        String nome=val.getValueAt(jt_tabela.getSelectedRow(), 1).toString();
+        String cpf_cnpj=val.getValueAt(jt_tabela.getSelectedRow(), 2).toString();
+        String data=val.getValueAt(jt_tabela.getSelectedRow(), 3).toString();
+        String livro=val.getValueAt(jt_tabela.getSelectedRow(), 4).toString();
+        String registro=val.getValueAt(jt_tabela.getSelectedRow(), 5).toString();
+        String folha=val.getValueAt(jt_tabela.getSelectedRow(), 6).toString();
+        String anotacao=val.getValueAt(jt_tabela.getSelectedRow(), 7).toString();
+        editar.recebendoDados(id,nome,cpf_cnpj,data,livro,registro,folha,anotacao);
+        }else{
+            JOptionPane.showMessageDialog(null,"Selecione uma linha na tabela para editar");
+        }
+    }//GEN-LAST:event_jb_editarActionPerformed
+
+    private void jb_novoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_novoActionPerformed
+        this.setVisible(false);
         new CadastroProtocolo(sessao).setVisible(true);
-        
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_jb_novoActionPerformed
+
+    private void jMenu4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu4MouseClicked
+        this.setVisible(false);
+        new TelaUsuarios(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu4MouseClicked
+
+    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        this.setVisible(false);
+        new TelaEmpresa(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -222,18 +336,19 @@ public class TelaInicial extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup RadioGroup;
-    private javax.swing.JButton jButton2;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JButton jb_editar;
+    private javax.swing.JButton jb_excluir;
+    private javax.swing.JButton jb_novo;
+    private javax.swing.JButton jb_perquisar;
+    private javax.swing.JRadioButton jr_fisica;
+    private javax.swing.JRadioButton jr_juridica;
+    private javax.swing.JTable jt_tabela;
+    private javax.swing.JTextField txt_nome;
     // End of variables declaration//GEN-END:variables
 }

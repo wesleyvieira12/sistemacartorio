@@ -27,12 +27,12 @@ public class Seed {
         Session s = sf.openSession();
         System.out.println("Criando empresa");
         Empresa e = new Empresa();
-        e.setBairro("Rodagem");
+        e.setBairro("Centro");
         e.setCidade("Oeiras");
-        e.setCnpj("1020233214435");
-        e.setEndereco("Av.floriano");
+        e.setCnpj("06.735.328/0001-32");
+        e.setEndereco("Faltando");
         e.setEstado("Piaui");
-        e.setNome("Catorio tal");
+        e.setNome("Cartorio do primeiro oficio de notas e registro de imoveis comarca de Oeiras-PI");
         
         Transaction t = s.beginTransaction();
         s.saveOrUpdate(e);
@@ -42,11 +42,16 @@ public class Seed {
         
         SessionFactory sf2 = HibernateUtil.getSessionFactory();
         Session s2 = sf2.openSession();
+        
         System.out.println("Criando usuario");
+        
         Usuario u = new Usuario();
         u.setEmpresa(e);
-        u.setNome("Wesley");
+        u.setNome("Administrador");
+        u.setUsername("admin");
+        u.setAdmin(true);
         String senha_inicial = "12345";
+        
         MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
         byte messageDigest[] = algorithm.digest(senha_inicial.getBytes("UTF-8"));
         StringBuilder hexString = new StringBuilder();
@@ -54,22 +59,14 @@ public class Seed {
             hexString.append(String.format("%02X", 0xFF & b));
         }
         String senha = hexString.toString();
-        System.out.println(senha);
         u.setSenha(senha);
-        u.setUsername("vieiray");
+               
         Transaction t2 = s2.beginTransaction();
         s2.saveOrUpdate(u);
         t2.commit();
-        
-        List<Usuario> l = s2.createQuery("from Usuario").list();
-        for(Usuario x : l){
-            System.out.println("Nome:"+x.getNome());
-        }
-       
-        
         s2.close();
         
-        
+        System.exit(0);
                 
     }
     

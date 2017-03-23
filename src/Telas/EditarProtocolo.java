@@ -22,20 +22,54 @@ import org.hibernate.Transaction;
  *
  * @author Wesley
  */
-public class CadastroProtocolo extends javax.swing.JFrame {
+public class EditarProtocolo extends javax.swing.JFrame {
 
     Sessao sessao;
     TelaInicial telaInicial;
+    int id;
+    
     /**
      * Creates new form CadastroProtoloco
      */
-    public CadastroProtocolo(Sessao sessao) {
+    public EditarProtocolo(Sessao sessao) {
         this.sessao = sessao;
         initComponents();
         if (jr_fisica.isSelected()) {
             txt_nome_empresa.setEnabled(false);
             txt_cnpj.setEnabled(false);
         }
+        
+    }
+    
+    public void recebendoDados(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao){
+        this.id = Integer.parseInt(id);
+        if(cpf_cnpj.length()==14){
+            txt_nome_representante.setText(nome);
+            txt_cpf.setText(cpf_cnpj);
+            jr_fisica.setSelected(true);
+            txt_nome_empresa.setEnabled(false);
+            txt_cnpj.setEnabled(false);
+            txt_nome_empresa.setText("");
+            txt_cnpj.setText("");
+            txt_nome_representante.setEnabled(true);
+            txt_cpf.setEnabled(true);
+        } else {
+            txt_nome_empresa.setText(nome);
+            txt_cnpj.setText(cpf_cnpj);
+            jr_juridica.setSelected(true);
+            txt_nome_representante.setEnabled(false);
+            txt_cpf.setEnabled(false);
+            txt_nome_representante.setText("");
+            txt_cpf.setText("");
+            txt_nome_empresa.setEnabled(true);
+            txt_cnpj.setEnabled(true);
+        }        
+        txt_registro.setText(registro);
+        txt_data.setText(data);
+        txt_livro.setText(livro);
+        txt_folha.setText(folha);
+        txt_anotacao.setText(anotacao);
+        
         
     }
 
@@ -55,7 +89,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txt_anotacao = new javax.swing.JTextArea();
-        jb_cadastrar = new javax.swing.JButton();
+        jb_atualizar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         txt_nome_empresa = new javax.swing.JTextField();
         txt_registro = new javax.swing.JTextField();
@@ -103,10 +137,10 @@ public class CadastroProtocolo extends javax.swing.JFrame {
         txt_anotacao.setRows(5);
         jScrollPane2.setViewportView(txt_anotacao);
 
-        jb_cadastrar.setText("Cadastrar");
-        jb_cadastrar.addActionListener(new java.awt.event.ActionListener() {
+        jb_atualizar.setText("Atualizar");
+        jb_atualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_cadastrarActionPerformed(evt);
+                jb_atualizarActionPerformed(evt);
             }
         });
 
@@ -267,7 +301,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                                     .addComponent(jLabel2)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jb_cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jb_atualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane2)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -342,7 +376,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(jb_cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jb_atualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
@@ -362,7 +396,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jr_fisicaActionPerformed
 
-    private void jb_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_cadastrarActionPerformed
+    private void jb_atualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_atualizarActionPerformed
        
         if (!txt_data.equals("  /  /    ")) {
             try {
@@ -371,6 +405,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 Transaction t = s.beginTransaction();
 
                 Protocolo p = new Protocolo();
+                p.setId(this.id);
                 p.setAnotacao(txt_anotacao.getText());
                 if(!txt_cnpj.getText().equals("  .   .   /    -  ")){ 
                     p.setCnpj_empresa(txt_cnpj.getText());
@@ -403,7 +438,8 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                     erro = p.valido(p, 'F');
                 }
                 if(!erro){
-                s.save(p);                
+                s.clear();
+                s.update(p);                
                 t.commit();
                 s.close();
                 
@@ -413,16 +449,8 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 }else{
                     telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao());    
                 }
-                txt_nome_representante.setText(null);
-                txt_nome_empresa.setText(null);
-                txt_cpf.setText(null);
-                txt_cnpj.setText(null);
-                txt_registro.setText(null);
-                txt_data.setText(null);
-                txt_livro.setText(null);
-                txt_folha.setText(null);
-                txt_anotacao.setText(null);
-                JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso!");
+                
+                JOptionPane.showMessageDialog(null,"Atualização realizada com sucesso!");
                 
                 
                 }else{
@@ -430,10 +458,10 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 }
                 
             } catch (ParseException ex) {
-                Logger.getLogger(CadastroProtocolo.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EditarProtocolo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_jb_cadastrarActionPerformed
+    }//GEN-LAST:event_jb_atualizarActionPerformed
 
     private void txt_nome_empresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nome_empresaActionPerformed
         // TODO add your handling code here:
@@ -518,6 +546,12 @@ public class CadastroProtocolo extends javax.swing.JFrame {
     private void jb_voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_voltarActionPerformed
         this.setVisible(false);
         new TelaInicial(sessao).setVisible(true);
+        telaInicial = new TelaInicial(sessao);
+        if(!txt_nome_representante.getText().equals("")){
+            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_representante.getText(),txt_cpf.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText());
+        }else{
+            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_representante.getText(),txt_cpf.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText());    
+        }
     }//GEN-LAST:event_jb_voltarActionPerformed
 
     private void txt_dataFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_dataFocusLost
@@ -551,21 +585,27 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CadastroProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditarProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CadastroProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditarProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CadastroProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditarProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CadastroProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditarProtocolo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CadastroProtocolo(null).setVisible(true);
+                new EditarProtocolo(null).setVisible(true);
             }
         });
     }
@@ -581,7 +621,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton jb_cadastrar;
+    private javax.swing.JButton jb_atualizar;
     private javax.swing.JButton jb_voltar;
     private javax.swing.JLabel jl_nome_representante;
     private javax.swing.JLabel jl_nome_representante1;
