@@ -21,7 +21,7 @@ import org.hibernate.Transaction;
  *
  * @author Wesley
  */
-public class Inicio {
+public class Seed {
     public static void main(String args[]) throws NoSuchAlgorithmException, UnsupportedEncodingException{
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session s = sf.openSession();

@@ -5,16 +5,30 @@
  */
 package Telas;
 
+import Hibernate.HibernateUtil;
+import Modulos.Protocolo;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
 /**
  *
  * @author Wesley
  */
 public class CadastroProtocolo extends javax.swing.JFrame {
 
+    Sessao sessao;
     /**
      * Creates new form CadastroProtoloco
      */
-    public CadastroProtocolo() {
+    public CadastroProtocolo(Sessao sessao) {
+         this.sessao = sessao;
         initComponents();
         if(jr_fisica.isSelected()){
             txt_nome_empresa.setEnabled(false);
@@ -303,7 +317,29 @@ public class CadastroProtocolo extends javax.swing.JFrame {
     }//GEN-LAST:event_jr_fisicaActionPerformed
 
     private void jb_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_cadastrarActionPerformed
-
+        
+        System.out.println("Empresa:"+ sessao.currentEmpresa().getNome());
+        /*try {
+            SessionFactory sf = HibernateUtil.getSessionFactory();
+            Session s = sf.openSession();
+            Transaction t = s.beginTransaction();
+            Protocolo p = new Protocolo();
+            p.setAnotacao(txt_anotacao.getText());
+            p.setCnpj_empresa(txt_cnpj.getText());
+            p.setCpf_representante(txt_cpf.getText());
+            DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+            Date date = (Date)formatter.parse(txt_data.getText());
+            p.setData(date);
+            p.setEmpresa(null);
+            //colocar mais atributos
+            
+            
+            s.saveOrUpdate(e);
+            t.commit();
+            s.close();
+        } catch (ParseException ex) {
+            Logger.getLogger(CadastroProtocolo.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
     }//GEN-LAST:event_jb_cadastrarActionPerformed
 
     private void txt_nome_empresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nome_empresaActionPerformed
@@ -375,7 +411,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CadastroProtocolo().setVisible(true);
+                new CadastroProtocolo(null).setVisible(true);
             }
         });
     }

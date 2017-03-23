@@ -11,11 +11,16 @@ package Telas;
  */
 public class TelaInicial extends javax.swing.JFrame {
 
+    Sessao sessao;
     /**
      * Creates new form Listar
      */
-    public TelaInicial() {
+    public TelaInicial(Sessao sessao) {
+        
+        
+        this.sessao = sessao;
         initComponents();
+        
     }
 
     /**
@@ -172,7 +177,11 @@ public class TelaInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+        
+        this.setVisible(false);
+        
+        new CadastroProtocolo(sessao).setVisible(true);
+        
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
@@ -206,7 +215,7 @@ public class TelaInicial extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaInicial().setVisible(true);
+                new TelaInicial(null).setVisible(true);         
             }
         });
     }

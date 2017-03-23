@@ -83,7 +83,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("SISTEMA RI");
+        jLabel3.setText("RI");
         getContentPane().add(jLabel3);
         jLabel3.setBounds(0, 11, 400, 39);
 
@@ -124,7 +124,8 @@ public class Login extends javax.swing.JFrame {
             boolean erro = true;
             for(Usuario u : usuarios){
                 if(u.getUsername().equals(txt_usuario.getText()) && u.getSenha().equals(senha)){
-                    new TelaInicial().setVisible(true);
+                    Sessao sessao = new Sessao(u);
+                    new TelaInicial(sessao).setVisible(true);
                     this.setVisible(false);
                     erro = false;
                 }
