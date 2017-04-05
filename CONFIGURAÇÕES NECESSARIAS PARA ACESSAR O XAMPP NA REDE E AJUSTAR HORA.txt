@@ -1,0 +1,22 @@
+Vai Em apache/conf/extra e Abra o Arquivo httpd-xampp.conf
+
+aperte crtl + f, e busque por " <LocationMatch "
+
+APOS ISTO VERIFIQUE O CODIGO A BAIXO E REMOVA O QUE ESTIVER ENTRE :
+<LocationMatch "^/(?i:(?:xampp|security|licenses|phpmyadmin|webalizer|server-status|server-info))"> 
+
+</LocationMatch>
+
+E ADICIONE ESTAS LINHAS:
+
+Order deny,allow        
+Allow from all
+ErrorDocument 403 /error/XAMPP_FORBIDDEN.html.var
+
+
+CASO A HORA ESTEJA APARECENDO ERRADO É SÓ IR NO XAMPP E EM CONFIG DO APACHE VAI EM PHP.IN E MUDA 
+PROCURA POR "date.timezone" e troque por "date.timezone = America/Sao_Paulo"
+------------------------------------------------------------------------
+
+Instalar DLL do printer para poder imprimir automaticamente!
+------------------------------------------------------------------------

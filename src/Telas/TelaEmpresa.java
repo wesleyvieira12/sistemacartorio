@@ -5,6 +5,14 @@
  */
 package Telas;
 
+import Hibernate.HibernateUtil;
+import java.awt.Toolkit;
+import javax.swing.JOptionPane;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
+
 /**
  *
  * @author Wesley
@@ -18,6 +26,15 @@ public class TelaEmpresa extends javax.swing.JFrame {
     public TelaEmpresa(Sessao sessao) {
         this.sessao = sessao;
         initComponents();
+        setTitle("Sistema do Cartorio - "+sessao.current_empresa.getNome());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
+        txt_nome.setText(sessao.current_empresa.getNome());
+        txt_endereco.setText(sessao.current_empresa.getEndereco());
+        txt_bairro.setText(sessao.current_empresa.getBairro());
+        txt_estado.setText(sessao.current_empresa.getEstado());
+        txt_cidade.setText(sessao.current_empresa.getCidade());
+        txt_cnpj.setText(sessao.current_empresa.getCnpj());
+        
     }
 
     /**
@@ -29,13 +46,166 @@ public class TelaEmpresa extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        txt_estado = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        txt_nome = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txt_cnpj = new javax.swing.JFormattedTextField();
+        txt_endereco = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txt_bairro = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txt_cidade = new javax.swing.JTextField();
+        txt_atualizar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados da Empresa"));
+
+        jLabel5.setText("Cidade");
+
+        txt_estado.setToolTipText("");
+        txt_estado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_estadoActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Estado");
+
+        jLabel7.setText("CNPJ");
+
+        txt_nome.setToolTipText("");
+        txt_nome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_nomeActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Nome");
+
+        try {
+            txt_cnpj.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###.###/####-##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        txt_cnpj.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_cnpjActionPerformed(evt);
+            }
+        });
+
+        txt_endereco.setToolTipText("");
+        txt_endereco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_enderecoActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Endereço");
+
+        txt_bairro.setToolTipText("");
+        txt_bairro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_bairroActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Bairro");
+
+        txt_cidade.setToolTipText("");
+        txt_cidade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_cidadeActionPerformed(evt);
+            }
+        });
+
+        txt_atualizar.setBackground(new java.awt.Color(255, 255, 255));
+        txt_atualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Actions-edit-redo-icon.png"))); // NOI18N
+        txt_atualizar.setText("Atualizar");
+        txt_atualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_atualizarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txt_bairro, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel3)
+                        .addComponent(txt_endereco, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel4)
+                        .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel5)
+                    .addComponent(txt_cidade)
+                    .addComponent(txt_estado)
+                    .addComponent(txt_cnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txt_atualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_estado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_endereco, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_cidade, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel7))
+                        .addGap(34, 34, 34))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txt_bairro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_cnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addComponent(txt_atualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jMenuBar1.setPreferredSize(new java.awt.Dimension(235, 45));
+
+        jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Home-icon.png"))); // NOI18N
         jMenu3.setText("Inicio");
+        jMenu3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jMenu3MouseClicked(evt);
@@ -43,7 +213,9 @@ public class TelaEmpresa extends javax.swing.JFrame {
         });
         jMenuBar1.add(jMenu3);
 
+        jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/User-Group-icon.png"))); // NOI18N
         jMenu4.setText("Usuarios");
+        jMenu4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jMenu4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jMenu4MouseClicked(evt);
@@ -51,20 +223,37 @@ public class TelaEmpresa extends javax.swing.JFrame {
         });
         jMenuBar1.add(jMenu4);
 
+        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/App-edit-icon.png"))); // NOI18N
+        jMenu1.setText("Logs");
+        jMenu1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu1MouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenu1);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenu4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu4MouseClicked
@@ -76,6 +265,55 @@ public class TelaEmpresa extends javax.swing.JFrame {
         this.setVisible(false);
         new TelaInicial(sessao).setVisible(true);
     }//GEN-LAST:event_jMenu3MouseClicked
+
+    private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
+        this.setVisible(false);
+        new TelaLog(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu1MouseClicked
+
+    private void txt_nomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nomeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_nomeActionPerformed
+
+    private void txt_enderecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_enderecoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_enderecoActionPerformed
+
+    private void txt_bairroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_bairroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_bairroActionPerformed
+
+    private void txt_cidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cidadeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_cidadeActionPerformed
+
+    private void txt_estadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_estadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_estadoActionPerformed
+
+    private void txt_cnpjActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cnpjActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_cnpjActionPerformed
+
+    private void txt_atualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_atualizarActionPerformed
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s = sf.openSession();
+        Transaction t = s.beginTransaction();
+   
+        sessao.current_empresa.setBairro(txt_bairro.getText());
+        sessao.current_empresa.setCidade(txt_cidade.getText());
+        sessao.current_empresa.setEstado(txt_estado.getText());
+        sessao.current_empresa.setEndereco(txt_endereco.getText());
+        sessao.current_empresa.setCnpj(txt_cnpj.getText());
+        sessao.current_empresa.setNome(txt_nome.getText());
+        
+        s.saveOrUpdate(sessao.current_empresa);
+        System.out.println(sessao.current_empresa.getId()+"");
+        System.out.println(sessao.current_empresa.getEndereco()+"");
+        t.commit();
+        s.close();
+        JOptionPane.showMessageDialog(null,"Atualizado com sucesso");
+    }//GEN-LAST:event_txt_atualizarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -113,8 +351,23 @@ public class TelaEmpresa extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton txt_atualizar;
+    private javax.swing.JTextField txt_bairro;
+    private javax.swing.JTextField txt_cidade;
+    private javax.swing.JFormattedTextField txt_cnpj;
+    private javax.swing.JTextField txt_endereco;
+    private javax.swing.JTextField txt_estado;
+    private javax.swing.JTextField txt_nome;
     // End of variables declaration//GEN-END:variables
 }

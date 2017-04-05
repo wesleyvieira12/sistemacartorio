@@ -6,14 +6,17 @@
 package Telas;
 
 import Hibernate.HibernateUtil;
+import Modulos.Log;
 
 import Modulos.Usuario;
+import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,8 +35,9 @@ public class TelaUsuarios extends javax.swing.JFrame {
     public TelaUsuarios(Sessao sessao) {
         this.sessao=sessao;
         initComponents();
+        setTitle("Sistema do Cartorio - "+sessao.current_empresa.getNome());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
         
-        setTitle("Sistema da empresa - "+sessao.currentEmpresa().getNome());
         
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session s2 = sf.openSession();
@@ -41,7 +45,7 @@ public class TelaUsuarios extends javax.swing.JFrame {
          val= (DefaultTableModel) jt_tabela.getModel();
         for(Usuario u : usuarios){
             
-            val.addRow(new String[]{u.getNome(),u.getUsername(),u.getAdmin()? "Admin": "Normal" });
+            val.addRow(new String[]{""+u.getId(),u.getNome(),u.getUsername(),u.getAdmin()? "Admin": "Normal" });
             
             
             
@@ -63,18 +67,17 @@ public class TelaUsuarios extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         txt_senha = new javax.swing.JTextField();
         txt_nome = new javax.swing.JTextField();
-        txt_confirmar_senha = new javax.swing.JTextField();
         txt_usuario = new javax.swing.JTextField();
         jb_cadastrar = new javax.swing.JButton();
         jb_excluir = new javax.swing.JButton();
         jb_editar = new javax.swing.JButton();
         jc_admin = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu4 = new javax.swing.JMenu();
+        jMenu5 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -83,15 +86,20 @@ public class TelaUsuarios extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Usuario", "Tipo"
+                "#", "Nome", "Usuario", "Tipo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        jt_tabela.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jt_tabelaMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jt_tabela);
@@ -102,8 +110,8 @@ public class TelaUsuarios extends javax.swing.JFrame {
 
         jLabel3.setText("Senha");
 
-        jLabel4.setText("Confirmar senha");
-
+        jb_cadastrar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_cadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/new-file-icon.png"))); // NOI18N
         jb_cadastrar.setText("Cadastrar");
         jb_cadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -111,27 +119,57 @@ public class TelaUsuarios extends javax.swing.JFrame {
             }
         });
 
+        jb_excluir.setBackground(new java.awt.Color(255, 255, 255));
+        jb_excluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Close-2-icon.png"))); // NOI18N
         jb_excluir.setText("Excluir");
+        jb_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_excluirActionPerformed(evt);
+            }
+        });
 
+        jb_editar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_editar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Pencil-icon.png"))); // NOI18N
         jb_editar.setText("Editar");
+        jb_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_editarActionPerformed(evt);
+            }
+        });
 
         jc_admin.setText("Administrador");
 
-        jMenu4.setText("Inicio");
-        jMenu4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jMenuBar1.setPreferredSize(new java.awt.Dimension(235, 45));
+
+        jMenu5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Home-icon.png"))); // NOI18N
+        jMenu5.setText("Inicio");
+        jMenu5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMenu5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu4MouseClicked(evt);
+                jMenu5MouseClicked(evt);
             }
         });
-        jMenuBar1.add(jMenu4);
+        jMenuBar1.add(jMenu5);
 
+        jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/company-building-icon.png"))); // NOI18N
         jMenu3.setText("Empresa");
+        jMenu3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jMenu3MouseClicked(evt);
             }
         });
         jMenuBar1.add(jMenu3);
+
+        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/App-edit-icon.png"))); // NOI18N
+        jMenu1.setText("Logs");
+        jMenu1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu1MouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
 
@@ -140,40 +178,33 @@ public class TelaUsuarios extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jb_editar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jb_excluir)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jb_cadastrar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addGap(17, 17, 17)
+                        .addGap(17, 17, 17)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jb_editar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jb_excluir)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jb_cadastrar))
+                            .addComponent(jc_admin)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(jLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel3)
                                         .addComponent(jLabel2))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(txt_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txt_senha, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addGap(22, 22, 22)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(txt_confirmar_senha, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jc_admin)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGap(9, 9, 9)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txt_usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txt_senha, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 10, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,13 +221,6 @@ public class TelaUsuarios extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_senha, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jLabel4))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_confirmar_senha, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jc_admin)
                 .addGap(18, 18, 18)
@@ -204,34 +228,29 @@ public class TelaUsuarios extends javax.swing.JFrame {
                     .addComponent(jb_cadastrar)
                     .addComponent(jb_excluir)
                     .addComponent(jb_editar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jMenu4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu4MouseClicked
-        this.setVisible(false);
-        new TelaInicial(sessao).setVisible(true);
-    }//GEN-LAST:event_jMenu4MouseClicked
-
-    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
-        this.setVisible(false);
-        new TelaEmpresa(sessao).setVisible(true);
-    }//GEN-LAST:event_jMenu3MouseClicked
 
     private void jb_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_cadastrarActionPerformed
         try {
             SessionFactory sf = HibernateUtil.getSessionFactory();
             Session s = sf.openSession();
             Transaction t = s.beginTransaction();
+            
             Usuario u = new Usuario();
             u.setAdmin(jc_admin.isSelected());
-            u.setEmpresa(sessao.currentEmpresa());
+            u.setEmpresa(sessao.current_empresa);
             u.setNome(txt_nome.getText());
             u.setUsername(txt_usuario.getText());
+            if(txt_senha.getText().equals("")){
+                u.setSenha(txt_senha.getText());
+            }else{
             String senha_inicial = txt_senha.getText();
             MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
             byte messageDigest[] = algorithm.digest(senha_inicial.getBytes("UTF-8"));
@@ -241,18 +260,112 @@ public class TelaUsuarios extends javax.swing.JFrame {
             }
             String senha = hexString.toString();
             u.setSenha(senha);            
-            
+            }
+            if(!u.valido(u)){
             s.save(u);
             t.commit();
             s.close();
+            new Log().gerandoLog(sessao.current_user, "Novo cadastro de usuario: "+u.getNome());
+            val.addRow(new String[]{u.getId()+"",u.getNome(),u.getUsername(), u.getAdmin()? "Admin":"Normal"});
+            txt_nome.setText(null);
+            txt_usuario.setText(null);
+            txt_senha.setText(null);
+            }
             
-            val.addRow(new String[]{u.getNome(),u.getUsername(), u.getAdmin()? "Admin":"Normal"});
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jb_cadastrarActionPerformed
+
+    private void jb_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_excluirActionPerformed
+        int resultado = JOptionPane.showConfirmDialog(null,"Tem certeza?","Escolha uma opção",JOptionPane.YES_NO_OPTION);
+        if(resultado == JOptionPane.YES_OPTION){
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s = sf.openSession();
+        Transaction t = s.beginTransaction();
+        List<Usuario> u = s.createQuery("from Usuario where username='"+val.getValueAt(jt_tabela.getSelectedRow(), 1).toString()+"'").list();
+        s.delete(u.get(0));
+        t.commit();
+        s.close();   
+        
+        val.removeRow(jt_tabela.getSelectedRow());
+        new Log().gerandoLog(sessao.current_user, "Excluiu o usuario "+u.get(0).getNome());
+        JOptionPane.showMessageDialog(null,"Excluido com sucesso!");
+        }
+    }//GEN-LAST:event_jb_excluirActionPerformed
+
+    private void jb_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_editarActionPerformed
+        try {
+            SessionFactory sf = HibernateUtil.getSessionFactory();
+            Session s = sf.openSession();
+            Transaction t = s.beginTransaction();
+            List<Usuario> usuarios = s.createQuery("from Usuario where id=" +val.getValueAt(jt_tabela.getSelectedRow(), 0)).list();
+            Usuario u = usuarios.get(0);
+            u.setId(u.getId());
+            u.setAdmin(jc_admin.isSelected());
+            u.setEmpresa(sessao.current_empresa);
+            u.setNome(txt_nome.getText());
+            u.setUsername(txt_usuario.getText());
+            if(txt_senha.getText().equals("")){
+                u.setSenha(u.getSenha());
+            }else{
+            String senha_inicial = txt_senha.getText();
+            MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
+            byte messageDigest[] = algorithm.digest(senha_inicial.getBytes("UTF-8"));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : messageDigest) {
+                hexString.append(String.format("%02X", 0xFF & b));
+            }
+            String senha = hexString.toString();
+            u.setSenha(senha);            
+            }
+            
+            s.update(u);
+            t.commit();
+            s.close();
+            JOptionPane.showMessageDialog(null, "Atualizado com sucesso");
+            new Log().gerandoLog(sessao.current_user, "Cadastro atualizado: "+u.getNome());
+            txt_nome.setText(null);
+            txt_usuario.setText(null);
+            txt_senha.setText(null);
+            
+            val.setValueAt(u.getId(), jt_tabela.getSelectedRow(), 0);
+            val.setValueAt(u.getNome(), jt_tabela.getSelectedRow(), 1);
+            val.setValueAt(u.getUsername(), jt_tabela.getSelectedRow(), 2);
+            val.setValueAt(u.getAdmin()? "Admin":"Normal", jt_tabela.getSelectedRow(), 3);
+            
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jb_editarActionPerformed
+
+    private void jt_tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jt_tabelaMouseClicked
+        txt_nome.setText(val.getValueAt(jt_tabela.getSelectedRow(), 1).toString());
+        txt_usuario.setText(val.getValueAt(jt_tabela.getSelectedRow(), 2).toString());
+        if(val.getValueAt(jt_tabela.getSelectedRow(), 3).toString().equals("Admin"))
+            jc_admin.setSelected(true);
+        else jc_admin.setSelected(false);
+        
+    }//GEN-LAST:event_jt_tabelaMouseClicked
+
+    private void jMenu5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu5MouseClicked
+        this.setVisible(false);
+        new TelaInicial(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu5MouseClicked
+
+    private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
+        this.setVisible(false);
+        new TelaLog(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu1MouseClicked
+
+    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        this.setVisible(false);
+        new TelaEmpresa(sessao).setVisible(true);
+    }//GEN-LAST:event_jMenu3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -293,9 +406,9 @@ public class TelaUsuarios extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jb_cadastrar;
@@ -303,7 +416,6 @@ public class TelaUsuarios extends javax.swing.JFrame {
     private javax.swing.JButton jb_excluir;
     private javax.swing.JCheckBox jc_admin;
     private javax.swing.JTable jt_tabela;
-    private javax.swing.JTextField txt_confirmar_senha;
     private javax.swing.JTextField txt_nome;
     private javax.swing.JTextField txt_senha;
     private javax.swing.JTextField txt_usuario;

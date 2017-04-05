@@ -6,7 +6,9 @@
 package Telas;
 
 import Hibernate.HibernateUtil;
+import Modulos.Log;
 import Modulos.Protocolo;
+import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -32,17 +34,30 @@ public class TelaInicial extends javax.swing.JFrame {
         
         this.sessao = sessao;
         initComponents();
-        setTitle("Sistema da empresa - "+sessao.currentEmpresa().getNome());
+        
+        if(!sessao.current_user.getAdmin()){
+            jMenuBar.setVisible(false);
+            jb_novo.setVisible(false);
+            jb_editar.setVisible(false);
+            jb_excluir.setVisible(false);
+            jp_acoes.setVisible(false);
+        }
+        
+        
+        setTitle("Sistema do Cartorio - "+sessao.current_empresa.getNome());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
+        
+        
         
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session s2 = sf.openSession();
         List<Protocolo> protocolos = s2.createQuery("from Protocolo").list();
          val= (DefaultTableModel) jt_tabela.getModel();
         for(Protocolo p : protocolos){
-            if(!p.getNome_representante().equals("")){
-            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});
+            if(p.getTipo()=='F'){
+            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo()});
             }else{
-            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});    
+            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo()});    
             }
         }
         s2.close();
@@ -50,9 +65,9 @@ public class TelaInicial extends javax.swing.JFrame {
         
     }
     
-    public void recebendoDadosTabela(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao){
+    public void recebendoDadosTabela(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao, String tipo){
         DefaultTableModel val = (DefaultTableModel) jt_tabela.getModel();
-        val.addRow(new String[]{ id, nome, cpf_cnpj, data, livro, registro,folha, anotacao});
+        val.addRow(new String[]{ id, nome, cpf_cnpj, data, livro, registro,folha, anotacao,tipo});
     }
 
     /**
@@ -68,17 +83,21 @@ public class TelaInicial extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         jt_tabela = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         txt_nome = new javax.swing.JTextField();
-        jb_perquisar = new javax.swing.JButton();
-        jb_excluir = new javax.swing.JButton();
-        jb_editar = new javax.swing.JButton();
-        jb_novo = new javax.swing.JButton();
         jr_fisica = new javax.swing.JRadioButton();
         jr_juridica = new javax.swing.JRadioButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu4 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        jb_perquisar = new javax.swing.JButton();
+        jp_acoes = new javax.swing.JPanel();
+        jb_novo = new javax.swing.JButton();
+        jb_editar = new javax.swing.JButton();
+        jb_excluir = new javax.swing.JButton();
+        jMenuBar = new javax.swing.JMenuBar();
+        jm_usuarios = new javax.swing.JMenu();
+        jm_empresa = new javax.swing.JMenu();
+        jm_logs = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,11 +106,11 @@ public class TelaInicial extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nº de ordem", "Nome ", "CPF/CNPJ", "Data do registro", "Livro", "Registro", "Folha", "Anotações"
+                "Nº de ordem", "Nome ", "CPF/CNPJ", "Data do registro", "Livro", "Registro", "Folha", "Anotações", "Tipo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -99,6 +118,8 @@ public class TelaInicial extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jt_tabela);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pesquisa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Nome");
@@ -109,34 +130,6 @@ public class TelaInicial extends javax.swing.JFrame {
             }
         });
 
-        jb_perquisar.setText("Pesquisar");
-        jb_perquisar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_perquisarActionPerformed(evt);
-            }
-        });
-
-        jb_excluir.setText("Excluir");
-        jb_excluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_excluirActionPerformed(evt);
-            }
-        });
-
-        jb_editar.setText("Editar");
-        jb_editar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_editarActionPerformed(evt);
-            }
-        });
-
-        jb_novo.setText("Novo");
-        jb_novo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_novoActionPerformed(evt);
-            }
-        });
-
         buttonGroup1.add(jr_fisica);
         jr_fisica.setSelected(true);
         jr_fisica.setText("Pessoa Física");
@@ -144,79 +137,172 @@ public class TelaInicial extends javax.swing.JFrame {
         buttonGroup1.add(jr_juridica);
         jr_juridica.setText("Pessoa Jurídica");
 
-        jMenu4.setText("Usuarios");
-        jMenu4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu4MouseClicked(evt);
+        jb_perquisar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_perquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Start-Menu-Search-icon.png"))); // NOI18N
+        jb_perquisar.setText("Pesquisar");
+        jb_perquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_perquisarActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu4);
 
-        jMenu3.setText("Empresa");
-        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jMenu3MouseClicked(evt);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jr_fisica)
+                        .addGap(10, 10, 10)
+                        .addComponent(jr_juridica))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jb_perquisar))
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jb_perquisar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jr_fisica)
+                    .addComponent(jr_juridica))
+                .addContainerGap(8, Short.MAX_VALUE))
+        );
+
+        jp_acoes.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ações", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+
+        jb_novo.setBackground(new java.awt.Color(255, 255, 255));
+        jb_novo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/new-file-icon.png"))); // NOI18N
+        jb_novo.setText("Novo");
+        jb_novo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_novoActionPerformed(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
 
-        setJMenuBar(jMenuBar1);
+        jb_editar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_editar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Pencil-icon.png"))); // NOI18N
+        jb_editar.setText("Editar");
+        jb_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_editarActionPerformed(evt);
+            }
+        });
+
+        jb_excluir.setBackground(new java.awt.Color(255, 255, 255));
+        jb_excluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Close-2-icon.png"))); // NOI18N
+        jb_excluir.setText("Excluir");
+        jb_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_excluirActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jp_acoesLayout = new javax.swing.GroupLayout(jp_acoes);
+        jp_acoes.setLayout(jp_acoesLayout);
+        jp_acoesLayout.setHorizontalGroup(
+            jp_acoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jp_acoesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jb_novo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jb_editar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jb_excluir)
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+        jp_acoesLayout.setVerticalGroup(
+            jp_acoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_acoesLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jp_acoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jb_excluir)
+                    .addComponent(jb_editar)
+                    .addComponent(jb_novo))
+                .addGap(32, 32, 32))
+        );
+
+        jMenuBar.setPreferredSize(new java.awt.Dimension(251, 45));
+
+        jm_usuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/User-Group-icon.png"))); // NOI18N
+        jm_usuarios.setText("Usuarios");
+        jm_usuarios.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jm_usuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jm_usuariosMouseClicked(evt);
+            }
+        });
+        jMenuBar.add(jm_usuarios);
+
+        jm_empresa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/company-building-icon.png"))); // NOI18N
+        jm_empresa.setText("Empresa");
+        jm_empresa.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jm_empresa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jm_empresaMouseClicked(evt);
+            }
+        });
+        jMenuBar.add(jm_empresa);
+
+        jm_logs.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/App-edit-icon.png"))); // NOI18N
+        jm_logs.setText("Logs");
+        jm_logs.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jm_logs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jm_logsMouseClicked(evt);
+            }
+        });
+        jMenuBar.add(jm_logs);
+
+        setJMenuBar(jMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(jr_fisica)
-                                .addGap(18, 18, 18)
-                                .addComponent(jr_juridica))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jb_perquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jb_novo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jb_editar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jb_excluir)
-                        .addGap(18, 18, 18)))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jp_acoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jp_acoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jb_excluir)
-                            .addComponent(jb_editar)
-                            .addComponent(jb_novo)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(jr_fisica)
-                            .addComponent(jr_juridica))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_nome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jb_perquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                        .addGap(444, 444, 444)
+                        .addComponent(jLabel1)
+                        .addContainerGap(22, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txt_nomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nomeActionPerformed
@@ -238,10 +324,10 @@ public class TelaInicial extends javax.swing.JFrame {
             val.removeRow(0);
         }
         for(Protocolo p : protocolos){
-            if(!p.getNome_representante().equals("")){
-            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});
+            if(p.getTipo()=='F'){
+            val.addRow(new String[]{p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo()});
             }else{
-            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao()});    
+            val.addRow(new String[]{p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo()});    
             }
         }
         s2.close();
@@ -250,7 +336,8 @@ public class TelaInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_perquisarActionPerformed
 
     private void jb_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_excluirActionPerformed
-              
+        int resultado = JOptionPane.showConfirmDialog(null,"Tem certeza?","Escolha uma opção",JOptionPane.YES_NO_OPTION);
+        if(resultado == JOptionPane.YES_OPTION){
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session s = sf.openSession();
         Transaction t = s.beginTransaction();
@@ -260,8 +347,9 @@ public class TelaInicial extends javax.swing.JFrame {
         s.close();   
         
         val.removeRow(jt_tabela.getSelectedRow());
-        
+        new Log().gerandoLog(sessao.current_user, "Excluiu o protocolo de "+p.get(0).getNome_empresa()+p.get(0).getNome_representante());
         JOptionPane.showMessageDialog(null,"Excluido com sucesso!");
+        }
     }//GEN-LAST:event_jb_excluirActionPerformed
 
     private void jb_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_editarActionPerformed
@@ -271,13 +359,20 @@ public class TelaInicial extends javax.swing.JFrame {
         editar.setVisible(true);
         String id=val.getValueAt(jt_tabela.getSelectedRow(), 0).toString();
         String nome=val.getValueAt(jt_tabela.getSelectedRow(), 1).toString();
-        String cpf_cnpj=val.getValueAt(jt_tabela.getSelectedRow(), 2).toString();
+        String cpf_cnpj;
+        if(val.getValueAt(jt_tabela.getSelectedRow(), 2)!=null){
+        cpf_cnpj=val.getValueAt(jt_tabela.getSelectedRow(), 2).toString();
+        }else{
+        cpf_cnpj="";
+        }
+            
         String data=val.getValueAt(jt_tabela.getSelectedRow(), 3).toString();
         String livro=val.getValueAt(jt_tabela.getSelectedRow(), 4).toString();
         String registro=val.getValueAt(jt_tabela.getSelectedRow(), 5).toString();
         String folha=val.getValueAt(jt_tabela.getSelectedRow(), 6).toString();
         String anotacao=val.getValueAt(jt_tabela.getSelectedRow(), 7).toString();
-        editar.recebendoDados(id,nome,cpf_cnpj,data,livro,registro,folha,anotacao);
+        String tipo=val.getValueAt(jt_tabela.getSelectedRow(), 8).toString();
+        editar.recebendoDados(id,nome,cpf_cnpj,data,livro,registro,folha,anotacao,tipo);
         }else{
             JOptionPane.showMessageDialog(null,"Selecione uma linha na tabela para editar");
         }
@@ -288,15 +383,20 @@ public class TelaInicial extends javax.swing.JFrame {
         new CadastroProtocolo(sessao).setVisible(true);
     }//GEN-LAST:event_jb_novoActionPerformed
 
-    private void jMenu4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu4MouseClicked
+    private void jm_usuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jm_usuariosMouseClicked
         this.setVisible(false);
         new TelaUsuarios(sessao).setVisible(true);
-    }//GEN-LAST:event_jMenu4MouseClicked
+    }//GEN-LAST:event_jm_usuariosMouseClicked
 
-    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+    private void jm_empresaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jm_empresaMouseClicked
         this.setVisible(false);
         new TelaEmpresa(sessao).setVisible(true);
-    }//GEN-LAST:event_jMenu3MouseClicked
+    }//GEN-LAST:event_jm_empresaMouseClicked
+
+    private void jm_logsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jm_logsMouseClicked
+        this.setVisible(false);
+        new TelaLog(sessao).setVisible(true);
+    }//GEN-LAST:event_jm_logsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -337,15 +437,19 @@ public class TelaInicial extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup RadioGroup;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jb_editar;
     private javax.swing.JButton jb_excluir;
     private javax.swing.JButton jb_novo;
     private javax.swing.JButton jb_perquisar;
+    private javax.swing.JMenu jm_empresa;
+    private javax.swing.JMenu jm_logs;
+    private javax.swing.JMenu jm_usuarios;
+    private javax.swing.JPanel jp_acoes;
     private javax.swing.JRadioButton jr_fisica;
     private javax.swing.JRadioButton jr_juridica;
     private javax.swing.JTable jt_tabela;

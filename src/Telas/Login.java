@@ -6,7 +6,9 @@
 package Telas;
 
 import Hibernate.HibernateUtil;
+import Modulos.Log;
 import Modulos.Usuario;
+import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +31,10 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
+        setTitle("Login do sistema");
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
+        
+        
     }
 
     /**
@@ -40,52 +46,55 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jb_entrar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txt_usuario = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jb_entrar = new javax.swing.JButton();
+        jl_usuario = new javax.swing.JLabel();
+        jl_senha = new javax.swing.JLabel();
+        txt_usuario = new javax.swing.JTextField();
         txt_senha = new javax.swing.JPasswordField();
-        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Login do sistema");
         setPreferredSize(new java.awt.Dimension(400, 345));
         setResizable(false);
         getContentPane().setLayout(null);
 
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/certificate-icon.png"))); // NOI18N
+        getContentPane().add(jLabel5);
+        jLabel5.setBounds(10, 10, 100, 100);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("REGISTRO DE IMÓVEIS");
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(100, 40, 300, 39);
+
+        jb_entrar.setBackground(new java.awt.Color(255, 255, 255));
         jb_entrar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jb_entrar.setForeground(new java.awt.Color(255, 255, 255));
         jb_entrar.setText("Entrar");
-        jb_entrar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jb_entrar.setContentAreaFilled(false);
+        jb_entrar.setBorder(null);
+        jb_entrar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jb_entrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jb_entrarActionPerformed(evt);
             }
         });
         getContentPane().add(jb_entrar);
-        jb_entrar.setBounds(153, 243, 105, 45);
+        jb_entrar.setBounds(270, 260, 105, 45);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Usuário");
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(40, 80, 45, 20);
+        jl_usuario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jl_usuario.setText("Usuário");
+        getContentPane().add(jl_usuario);
+        jl_usuario.setBounds(120, 100, 50, 20);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Senha");
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(40, 160, 38, 17);
+        jl_senha.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jl_senha.setText("Senha");
+        getContentPane().add(jl_senha);
+        jl_senha.setBounds(120, 180, 40, 17);
 
         txt_usuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         getContentPane().add(txt_usuario);
-        txt_usuario.setBounds(36, 102, 325, 43);
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("RI");
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(0, 11, 400, 39);
+        txt_usuario.setBounds(115, 120, 270, 43);
 
         txt_senha.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         txt_senha.addActionListener(new java.awt.event.ActionListener() {
@@ -94,11 +103,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
         getContentPane().add(txt_senha);
-        txt_senha.setBounds(36, 179, 325, 38);
-
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/518164-backgrounds.jpg"))); // NOI18N
-        getContentPane().add(jLabel4);
-        jLabel4.setBounds(0, 0, 410, 320);
+        txt_senha.setBounds(115, 200, 270, 38);
 
         pack();
         setLocationRelativeTo(null);
@@ -106,9 +111,11 @@ public class Login extends javax.swing.JFrame {
 
     private void jb_entrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_entrarActionPerformed
         
+        
+        
         try {
             // TODO add your handling code here:
-            
+        
             SessionFactory sf = HibernateUtil.getSessionFactory();
             Session s = sf.openSession();
             List<Usuario> usuarios = s.createQuery("from Usuario").list();
@@ -128,6 +135,9 @@ public class Login extends javax.swing.JFrame {
                     new TelaInicial(sessao).setVisible(true);
                     this.setVisible(false);
                     erro = false;
+                    
+                   
+                    new Log().gerandoLog(sessao.current_user, "Logado com sucesso");
                 }
             }
             
@@ -185,11 +195,11 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JButton jb_entrar;
+    private javax.swing.JLabel jl_senha;
+    private javax.swing.JLabel jl_usuario;
     private javax.swing.JPasswordField txt_senha;
     private javax.swing.JTextField txt_usuario;
     // End of variables declaration//GEN-END:variables

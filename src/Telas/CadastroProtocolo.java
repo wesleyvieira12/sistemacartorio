@@ -6,7 +6,9 @@
 package Telas;
 
 import Hibernate.HibernateUtil;
+import Modulos.Log;
 import Modulos.Protocolo;
+import java.awt.Toolkit;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,10 +34,16 @@ public class CadastroProtocolo extends javax.swing.JFrame {
     public CadastroProtocolo(Sessao sessao) {
         this.sessao = sessao;
         initComponents();
+        
+        setTitle("Sistema do Cartorio - "+sessao.current_empresa.getNome());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
+        
         if (jr_fisica.isSelected()) {
             txt_nome_empresa.setEnabled(false);
             txt_cnpj.setEnabled(false);
         }
+        
+        
         
     }
 
@@ -103,6 +111,8 @@ public class CadastroProtocolo extends javax.swing.JFrame {
         txt_anotacao.setRows(5);
         jScrollPane2.setViewportView(txt_anotacao);
 
+        jb_cadastrar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_cadastrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Accept-icon.png"))); // NOI18N
         jb_cadastrar.setText("Cadastrar");
         jb_cadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,7 +232,9 @@ public class CadastroProtocolo extends javax.swing.JFrame {
             }
         });
 
+        jb_voltar.setBackground(new java.awt.Color(255, 255, 255));
         jb_voltar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jb_voltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Go-back-icon.png"))); // NOI18N
         jb_voltar.setText("Voltar");
         jb_voltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,15 +250,15 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jr_fisica)
-                                .addGap(18, 18, 18)
-                                .addComponent(jr_juridica)))
-                        .addGap(0, 866, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jb_cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jb_voltar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -255,41 +267,40 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                                             .addComponent(jLabel5))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(txt_nome_empresa, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txt_nome_representante))
-                                        .addGap(36, 36, 36)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txt_nome_empresa)
+                                            .addComponent(txt_nome_representante, javax.swing.GroupLayout.Alignment.TRAILING))
+                                        .addGap(36, 36, 36))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txt_livro, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel12))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(txt_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(90, 90, 90)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel10)
+                                            .addComponent(txt_folha, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(121, 121, 121)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jl_nome_representante1)
+                                    .addComponent(txt_data, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txt_cnpj, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                                         .addComponent(txt_cpf, javax.swing.GroupLayout.Alignment.TRAILING))
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel2)))
+                                    .addComponent(jLabel2))))
+                        .addGap(23, 23, 23))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jb_cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel7))
-                                .addGap(80, 80, 80)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jl_nome_representante1)
-                                    .addComponent(txt_data, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_livro, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel12))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel10)
-                                    .addComponent(txt_folha, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jb_voltar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(23, 23, 23))))
+                                .addComponent(jr_fisica)
+                                .addGap(18, 18, 18)
+                                .addComponent(jr_juridica)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,46 +318,54 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jl_nome_representante)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jl_nome_representante)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_nome_representante, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txt_cpf, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_nome_representante, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_cpf, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txt_nome_empresa, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_cnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_nome_empresa, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_cnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel10)
-                            .addComponent(jl_nome_representante1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txt_folha, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_data)
-                            .addComponent(txt_livro, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jl_nome_representante1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_data))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_livro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_folha, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txt_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addGap(43, 43, 43))
+                    .addComponent(txt_registro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(114, 114, 114)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
                 .addComponent(jb_cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jr_fisicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_fisicaActionPerformed
@@ -364,7 +383,7 @@ public class CadastroProtocolo extends javax.swing.JFrame {
 
     private void jb_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_cadastrarActionPerformed
        
-        if (!txt_data.equals("  /  /    ")) {
+        
             try {
                 SessionFactory sf = HibernateUtil.getSessionFactory();
                 Session s = sf.openSession();
@@ -375,13 +394,13 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 if(!txt_cnpj.getText().equals("  .   .   /    -  ")){ 
                     p.setCnpj_empresa(txt_cnpj.getText());
                 }else{
-                    p.setCnpj_empresa("");
+                    p.setCnpj_empresa(null);
                 }
                 
                 if(!txt_cpf.getText().equals("   .   .   -  ")){
                     p.setCpf_representante(txt_cpf.getText());
                 }else{
-                    p.setCpf_representante("");
+                    p.setCpf_representante(null);
                 }
                 if(!txt_data.getText().equals("  /  /    ")){
                 DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -390,28 +409,30 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 }else{
                     p.setData(null);
                 }
-                p.setEmpresa(sessao.currentEmpresa());
+                p.setEmpresa(sessao.current_empresa);
                 p.setFolha(txt_folha.getText());
                 p.setLivro(txt_livro.getText());
                 p.setNome_empresa(txt_nome_empresa.getText());
                 p.setNome_representante(txt_nome_representante.getText());
                 p.setRegistro(txt_registro.getText());
-                boolean erro;
+                boolean erro = false;
                 if (jr_juridica.isSelected()) {
-                    erro = p.valido(p, 'J');
+                    p.setTipo('J');
+                    
                 }else{
-                    erro = p.valido(p, 'F');
+                    p.setTipo('F');
                 }
+                erro = p.valido(p);
                 if(!erro){
                 s.save(p);                
                 t.commit();
                 s.close();
-                
+                new Log().gerandoLog(sessao.current_user, "Novo cadastro de protocolo inserido: "+p.getNome_empresa()+p.getNome_representante());
                 telaInicial = new TelaInicial(sessao);
                 if(!txt_nome_representante.getText().equals("")){
-                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao());
+                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo());
                 }else{
-                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao());    
+                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo());    
                 }
                 txt_nome_representante.setText(null);
                 txt_nome_empresa.setText(null);
@@ -422,17 +443,15 @@ public class CadastroProtocolo extends javax.swing.JFrame {
                 txt_livro.setText(null);
                 txt_folha.setText(null);
                 txt_anotacao.setText(null);
-                JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso!");
+                //JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso!");
                 
-                
-                }else{
-                    JOptionPane.showMessageDialog(null,"Complete os campos corretamente!");
+                txt_nome_representante.requestFocus();
                 }
                 
             } catch (ParseException ex) {
                 Logger.getLogger(CadastroProtocolo.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        
     }//GEN-LAST:event_jb_cadastrarActionPerformed
 
     private void txt_nome_empresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nome_empresaActionPerformed

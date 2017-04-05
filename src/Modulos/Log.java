@@ -1,9 +1,13 @@
 
 package Modulos;
 
+import Hibernate.HibernateUtil;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 
 @Entity
@@ -21,14 +25,31 @@ public class Log implements Serializable {
     /* Log tem um usuario*/
     @ManyToOne
     private Usuario usuario;  
-
-    public Log(long id, String informacao, Date datahora, Usuario usuario) {
-        this.id = id;
+    
+    public Log() { }
+    public Log(String informacao, Date datahora, Usuario usuario) {
+        
         this.informacao = informacao;
-        this.datahora = datahora;
+        Date data = new Date();
+        this.datahora = data;
         this.usuario = usuario;
     }
 
+       
+    public void gerandoLog(Usuario u, String info){
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s = sf.openSession();
+        Transaction t = s.beginTransaction();
+        Log l = new Log();
+        Date data = new Date();
+        l.setDatahora(data);
+        l.setInformacao(info);
+        l.setUsuario(u);
+        s.save(l);
+        t.commit();
+        s.close();
+    }
+    
     public long getId() {
         return id;
     }

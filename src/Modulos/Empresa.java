@@ -28,17 +28,17 @@ public class Empresa implements Serializable {
     @Id
     @GeneratedValue
     private long id;
-    @Column(nullable=false, length= 250)
+    @Column(nullable=true, length= 250)
     private String nome;
-    @Column (nullable=false, length= 250)
+    @Column (nullable=true, length= 250)
     private String endereco;
-    @Column(nullable=false, length= 250)
+    @Column(nullable=true, length= 250)
     private String bairro;
-    @Column(nullable=false, length= 20)
+    @Column(nullable=true, length= 20)
     private String estado;
-    @Column(nullable=false, length= 30)
+    @Column(nullable=true, length= 30)
     private String cidade;
-    @Column(unique=true, nullable=false, length= 50)
+    @Column(unique=true, nullable=true, length= 50)
     private String cnpj;
     /* Uma empresa tem varios usuarios*/
     @OneToMany(cascade = ALL, mappedBy="empresa")

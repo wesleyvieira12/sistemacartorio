@@ -6,7 +6,9 @@
 package Telas;
 
 import Hibernate.HibernateUtil;
+import Modulos.Log;
 import Modulos.Protocolo;
+import java.awt.Toolkit;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,8 @@ public class EditarProtocolo extends javax.swing.JFrame {
     public EditarProtocolo(Sessao sessao) {
         this.sessao = sessao;
         initComponents();
+        setTitle("Sistema do Cartorio - "+sessao.current_empresa.getNome());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Imagens/certificate-icon.png")));
         if (jr_fisica.isSelected()) {
             txt_nome_empresa.setEnabled(false);
             txt_cnpj.setEnabled(false);
@@ -41,9 +45,10 @@ public class EditarProtocolo extends javax.swing.JFrame {
         
     }
     
-    public void recebendoDados(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao){
+    public void recebendoDados(String id,String nome,String cpf_cnpj,String data,String livro,String registro,String folha,String anotacao, String tipo){
         this.id = Integer.parseInt(id);
-        if(cpf_cnpj.length()==14){
+        System.out.println(tipo);
+        if(tipo.equals("F")){
             txt_nome_representante.setText(nome);
             txt_cpf.setText(cpf_cnpj);
             jr_fisica.setSelected(true);
@@ -137,6 +142,8 @@ public class EditarProtocolo extends javax.swing.JFrame {
         txt_anotacao.setRows(5);
         jScrollPane2.setViewportView(txt_anotacao);
 
+        jb_atualizar.setBackground(new java.awt.Color(255, 255, 255));
+        jb_atualizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Actions-edit-redo-icon.png"))); // NOI18N
         jb_atualizar.setText("Atualizar");
         jb_atualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,7 +263,9 @@ public class EditarProtocolo extends javax.swing.JFrame {
             }
         });
 
+        jb_voltar.setBackground(new java.awt.Color(255, 255, 255));
         jb_voltar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jb_voltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Go-back-icon.png"))); // NOI18N
         jb_voltar.setText("Voltar");
         jb_voltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -410,13 +419,13 @@ public class EditarProtocolo extends javax.swing.JFrame {
                 if(!txt_cnpj.getText().equals("  .   .   /    -  ")){ 
                     p.setCnpj_empresa(txt_cnpj.getText());
                 }else{
-                    p.setCnpj_empresa("");
+                    p.setCnpj_empresa(null);
                 }
                 
                 if(!txt_cpf.getText().equals("   .   .   -  ")){
                     p.setCpf_representante(txt_cpf.getText());
                 }else{
-                    p.setCpf_representante("");
+                    p.setCpf_representante(null);
                 }
                 if(!txt_data.getText().equals("  /  /    ")){
                 DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -425,7 +434,7 @@ public class EditarProtocolo extends javax.swing.JFrame {
                 }else{
                     p.setData(null);
                 }
-                p.setEmpresa(sessao.currentEmpresa());
+                p.setEmpresa(sessao.current_empresa);
                 p.setFolha(txt_folha.getText());
                 p.setLivro(txt_livro.getText());
                 p.setNome_empresa(txt_nome_empresa.getText());
@@ -433,21 +442,23 @@ public class EditarProtocolo extends javax.swing.JFrame {
                 p.setRegistro(txt_registro.getText());
                 boolean erro;
                 if (jr_juridica.isSelected()) {
-                    erro = p.valido(p, 'J');
+                    p.setTipo('J');
+                    
                 }else{
-                    erro = p.valido(p, 'F');
+                    p.setTipo('F');
                 }
+                erro = p.valido(p);
                 if(!erro){
                 s.clear();
                 s.update(p);                
                 t.commit();
                 s.close();
-                
+                new Log().gerandoLog(sessao.current_user, "Protocolo alterado: "+p.getNome_empresa()+p.getNome_representante());
                 telaInicial = new TelaInicial(sessao);
                 if(!txt_nome_representante.getText().equals("")){
-                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao());
+                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_representante(),p.getCpf_representante(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo());
                 }else{
-                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao());    
+                    telaInicial.recebendoDadosTabela(p.getIdString(),p.getNome_empresa(),p.getCnpj_empresa(),p.getDataString(),p.getLivro(),p.getRegistro(),p.getFolha(),p.getAnotacao(),""+p.getTipo());    
                 }
                 
                 JOptionPane.showMessageDialog(null,"Atualização realizada com sucesso!");
@@ -548,9 +559,9 @@ public class EditarProtocolo extends javax.swing.JFrame {
         new TelaInicial(sessao).setVisible(true);
         telaInicial = new TelaInicial(sessao);
         if(!txt_nome_representante.getText().equals("")){
-            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_representante.getText(),txt_cpf.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText());
+            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_representante.getText(),txt_cpf.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText(),"F");
         }else{
-            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_representante.getText(),txt_cpf.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText());    
+            telaInicial.recebendoDadosTabela(""+this.id,txt_nome_empresa.getText(),txt_cnpj.getText(),txt_data.getText(),txt_livro.getText(),txt_registro.getText(),txt_folha.getText(),txt_anotacao.getText(),"J");    
         }
     }//GEN-LAST:event_jb_voltarActionPerformed
 

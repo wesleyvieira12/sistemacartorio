@@ -19,18 +19,17 @@ import org.hibernate.SessionFactory;
 public class Sessao {
     
     Usuario current_user;
+    Empresa current_empresa;
     
     public Sessao(Usuario u){
         this.current_user = u;
-    }
-    
-    public Empresa currentEmpresa(){
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session s = sf.openSession();
         List<Empresa> x = s.createQuery("from Empresa where id="+current_user.getEmpresa().getId()).list();
+        this.current_empresa = x.get(0);
         s.close();
-        return x.get(0);
     }
+    
 
     
 }

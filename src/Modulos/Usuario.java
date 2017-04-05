@@ -1,10 +1,14 @@
 
 package Modulos;
 
+import Hibernate.HibernateUtil;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
 import static javax.persistence.CascadeType.ALL;
+import javax.swing.JOptionPane;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 
 @Entity
@@ -40,7 +44,27 @@ public class Usuario implements Serializable {
         this.senha = senha;
         this.empresa = empresa;
     }
-
+    
+    public boolean valido(Usuario u) {
+        boolean erro = false;
+             
+        
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session s = sf.openSession();
+        List<Usuario> usuarios = s.createQuery("from Usuario where username='" + u.username+"'").list();
+        s.close();
+        
+        if(!usuarios.isEmpty()){ 
+            erro = true;
+            JOptionPane.showMessageDialog(null,"Usuario já existe");
+        }
+        if(u.username.equals("") || u.nome.equals("") || u.senha.equals("")){
+            erro = true;
+            JOptionPane.showMessageDialog(null,"Não pode haver dados em branco");
+        }   
+        
+        return erro;
+    }
     public long getId() {
         return id;
     }
